@@ -1,47 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
 import type { GameMode, GameDifficulty } from "@/entities/game";
 import { LeaderboardTable } from "@/features/leaderboard";
+import { useSettings } from "../hooks/useSettings";
+
 
 export const HomePage: React.FC = () => {
-  const navigate = useNavigate();
-  const [playerName, setPlayerName] = useState(
-    () => localStorage.getItem("player_name") || "Кіноман",
-  );
-  const [token, setToken] = useState(
-    () => localStorage.getItem("tmdb_access_token") || "",
-  );
-  const [mode, setMode] = useState<GameMode>("mixed");
-  const [difficulty, setDifficulty] = useState<GameDifficulty>("standard");
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const {
+    playerName,
+    setPlayerName,
+    mode,
+    setMode,
+    difficulty,
+    setDifficulty,
+    token,
+    setToken,
+    handleStartGame,
+    isSettingsOpen,
+    setIsSettingsOpen,
+    handleSaveSettings
+  } = useSettings();
 
-  useEffect(() => {
-    localStorage.setItem("player_name", playerName);
-  }, [playerName]);
-
-  const handleSaveSettings = () => {
-    localStorage.setItem("tmdb_access_token", token);
-    setIsSettingsOpen(false);
-  };
-
-  const handleStartGame = () => {
-    navigate("/game", { state: { playerName, mode, difficulty } });
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-between p-6 max-w-4xl mx-auto space-y-8">
-      {/* Шапка */}
-      <header className="text-center mt-8 space-y-2">
-        <h1 className="text-5xl font-black tracking-tight bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent text-glow-primary uppercase animate-pulse">
-          CineTrivia
-        </h1>
-        <p className="text-muted-foreground text-sm font-medium">
-          Перевір свої знання кіно за допомогою постерів, акторів та кадрів!
-        </p>
-      </header>
-
-      {/* Головний контент */}
-      <main className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+  return ( <>
         {/* Панель налаштування гри */}
         <section className="bg-card border border-border/60 rounded-3xl p-6 shadow-2xl space-y-6">
           <h2 className="text-xl font-bold text-glow-secondary text-secondary">
@@ -165,12 +143,6 @@ export const HomePage: React.FC = () => {
         <section className="w-full">
           <LeaderboardTable />
         </section>
-      </main>
-
-      <footer className="text-center text-muted-foreground text-[10px] pb-4">
-        CineTrivia &copy; {new Date().getFullYear()}. Дані отримано за допомогою
-        TMDB API.
-      </footer>
-    </div>
+        </>
   );
 };
