@@ -1,25 +1,79 @@
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "@fontsource-variable/inter";
 
 :root {
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --radius: 0.75rem;
+  /* Основна колірна схема Cinema Neon */
+  --background: oklch(10% 0.02 240);       /* Глибокий темно-синій/вугільний */
+  --foreground: oklch(98% 0.01 240);      /* Майже білий */
+  --card: oklch(13% 0.02 240);            /* Колір карток */
+  --card-foreground: oklch(98% 0.01 240);
+  
+  --primary: oklch(65% 0.25 340);         /* Сліпучий неоновий рожевий/пурпуровий */
+  --primary-foreground: oklch(100% 0 0);
+  
+  --secondary: oklch(75% 0.15 190);       /* Неоновий блакитний/ціановий */
+  --secondary-foreground: oklch(10% 0.02 240);
+  
+  --muted: oklch(25% 0.02 240);           /* Тьмяні елементи */
+  --muted-foreground: oklch(70% 0.02 240);
+  
+  --accent: oklch(80% 0.2 90);            /* Неоновий жовтий/золотий для рекордів */
+  --accent-foreground: oklch(10% 0.02 240);
+  
+  --destructive: oklch(60% 0.25 25);      /* Червоний неон для неправильної відповіді */
+  --destructive-foreground: oklch(100% 0 0);
+  
+  --success: oklch(70% 0.25 140);         /* Зелений неон для правильної відповіді */
+  
+  --border: oklch(22% 0.02 240);
+  --input: oklch(22% 0.02 240);
+  --ring: oklch(65% 0.25 340);
+  --radius: 1rem;
 }
 
 @theme inline {
   --font-sans: 'Inter Variable', sans-serif;
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-border: var(--border);
+  
+  /* Неонові тіні та ефекти світіння */
+  --shadow-neon-primary: 0 0 15px oklch(65% 0.25 340 / 40%), 0 0 30px oklch(65% 0.25 340 / 20%);
+  --shadow-neon-secondary: 0 0 15px oklch(75% 0.15 190 / 40%), 0 0 30px oklch(75% 0.15 190 / 20%);
+  --shadow-neon-success: 0 0 15px oklch(70% 0.25 140 / 40%);
+  --shadow-neon-destructive: 0 0 15px oklch(60% 0.25 25 / 40%);
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/30;
+    background-image: 
+      radial-gradient(circle at 10% 20%, oklch(15% 0.05 320 / 15%) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, oklch(15% 0.05 180 / 15%) 0%, transparent 40%);
+    background-attachment: fixed;
   }
+}
+
+/* Додаткові утиліти для світіння тексту */
+@utility text-glow-primary {
+  text-shadow: 0 0 8px oklch(65% 0.25 340 / 60%), 0 0 20px oklch(65% 0.25 340 / 30%);
+}
+@utility text-glow-secondary {
+  text-shadow: 0 0 8px oklch(75% 0.15 190 / 60%), 0 0 20px oklch(75% 0.15 190 / 30%);
 }
