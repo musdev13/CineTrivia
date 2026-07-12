@@ -1,29 +1,176 @@
-export const HomePage = () => {
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import type { GameMode, GameDifficulty } from "@/entities/game";
+import { LeaderboardTable } from "@/features/leaderboard";
+
+export const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+  const [playerName, setPlayerName] = useState(
+    () => localStorage.getItem("player_name") || "Кіноман",
+  );
+  const [token, setToken] = useState(
+    () => localStorage.getItem("tmdb_access_token") || "",
+  );
+  const [mode, setMode] = useState<GameMode>("mixed");
+  const [difficulty, setDifficulty] = useState<GameDifficulty>("standard");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("player_name", playerName);
+  }, [playerName]);
+
+  const handleSaveSettings = () => {
+    localStorage.setItem("tmdb_access_token", token);
+    setIsSettingsOpen(false);
+  };
+
+  const handleStartGame = () => {
+    navigate("/game", { state: { playerName, mode, difficulty } });
+  };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-zinc-50 text-zinc-900">
-      <div className="max-w-md w-full bg-white border border-zinc-200 rounded-3xl p-8 shadow-xs text-center">
-        <span className="inline-block px-3 py-1 text-xs font-semibold text-emerald-600 bg-emerald-50 rounded-full border border-emerald-200/50 mb-4">FSD Architecture</span>
-        <h1 className="text-3xl font-black tracking-tight text-zinc-900">CineTrivia</h1>
-        <p className="mt-3 text-sm text-zinc-500">Проект успішно ініціалізовано без App.tsx з React Router (Data Mode) за FSD архітектурою!</p>
-        <div className="mt-6 grid grid-cols-2 gap-2.5 text-left text-xs font-medium text-zinc-600">
-          <div className="bg-zinc-50 border border-zinc-100 rounded-xl p-3">
-            <span className="font-bold text-zinc-900 block mb-0.5">📁 app/</span>
-            main.tsx, route.tsx, index.css
+    <div className="min-h-screen flex flex-col items-center justify-between p-6 max-w-4xl mx-auto space-y-8">
+      {/* Шапка */}
+      <header className="text-center mt-8 space-y-2">
+        <h1 className="text-5xl font-black tracking-tight bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent text-glow-primary uppercase animate-pulse">
+          CineTrivia
+        </h1>
+        <p className="text-muted-foreground text-sm font-medium">
+          Перевір свої знання кіно за допомогою постерів, акторів та кадрів!
+        </p>
+      </header>
+
+      {/* Головний контент */}
+      <main className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        {/* Панель налаштування гри */}
+        <section className="bg-card border border-border/60 rounded-3xl p-6 shadow-2xl space-y-6">
+          <h2 className="text-xl font-bold text-glow-secondary text-secondary">
+            Налаштування гри
+          </h2>
+
+          {/* Ім'я */}
+          <div className="space-y-2">
+            <label className="text-xs text-muted-foreground font-semibold">
+              Ваше ім'я:
+            </label>
+            <input
+              type="text"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              className="w-full rounded-xl border border-input bg-background/50 h-12 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+            />
           </div>
-          <div className="bg-zinc-50 border border-zinc-100 rounded-xl p-3">
-            <span className="font-bold text-zinc-900 block mb-0.5">📁 pages/</span>
-            Сторінки додатку
+
+          {/* Режими гри */}
+          <div className="space-y-2">
+            <label className="text-xs text-muted-foreground font-semibold">
+              Режим вікторини:
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {(["mixed", "poster", "cast", "backdrop"] as GameMode[]).map(
+                (m) => (
+                  <button
+                    key={m}
+                    className={`py-3 px-2 rounded-xl text-xs font-bold border transition-all ${
+                      mode === m
+                        ? "bg-primary/10 text-primary border-primary/40 text-glow-primary"
+                        : "border-border/60 text-muted-foreground hover:text-foreground"
+                    }`}
+                    onClick={() => setMode(m)}
+                  >
+                    {m === "mixed" && "&#x1f3b2; Змішаний"}
+                    {m === "poster" && "&#x1f5bc; Постер"}
+                    {m === "cast" && "&#x1f3ad; Актори"}
+                    {m === "backdrop" && "&#x1f4f8; Кадр"}
+                  </button>
+                ),
+              )}
+            </div>
           </div>
-          <div className="bg-zinc-50 border border-zinc-100 rounded-xl p-3">
-            <span className="font-bold text-zinc-900 block mb-0.5">📁 features/</span>
-            Фічі додатку
+
+          {/* Складність */}
+          <div className="space-y-2">
+            <label className="text-xs text-muted-foreground font-semibold">
+              Складність:
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {(["standard", "hardcore"] as GameDifficulty[]).map((d) => (
+                <button
+                  key={d}
+                  className={`py-3 px-2 rounded-xl text-xs font-bold border transition-all ${
+                    difficulty === d
+                      ? "bg-secondary/10 text-secondary border-secondary/40 text-glow-secondary"
+                      : "border-border/60 text-muted-foreground hover:text-foreground"
+                  }`}
+                  onClick={() => setDifficulty(d)}
+                >
+                  {d === "standard" && "⭐ Стандарт (4 варіанти)"}
+                  {d === "hardcore" && "&#x1f525; Хардкор (введення)"}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="bg-zinc-50 border border-zinc-100 rounded-xl p-3">
-            <span className="font-bold text-zinc-900 block mb-0.5">📁 shared/</span>
-            ui, api, hooks, lib
+
+          {/* Кнопка старту */}
+          <button
+            type="button"
+            onClick={handleStartGame}
+            disabled={!token && !import.meta.env.VITE_TMDB_ACCESS_TOKEN}
+            className="inline-flex shrink-0 items-center justify-center border border-transparent transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full h-14 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 font-black text-base rounded-2xl text-white cursor-pointer"
+          >
+            Грати зараз
+          </button>
+
+          {/* Кнопка налаштувань токена */}
+          <div className="text-center">
+            <button
+              onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+              className="text-xs text-muted-foreground hover:text-primary transition-colors font-medium underline"
+            >
+              {!token && !import.meta.env.VITE_TMDB_ACCESS_TOKEN
+                ? "⚠️ Потрібно ввести TMDB токен"
+                : "⚙️ Редагувати токен TMDB"}
+            </button>
           </div>
-        </div>
-      </div>
+
+          {/* Спливаючі налаштування токена */}
+          {isSettingsOpen && (
+            <div className="p-4 bg-background border border-border/80 rounded-2xl space-y-4">
+              <span className="text-xs text-glow-primary text-primary font-bold block">
+                Налаштування TMDB API
+              </span>
+              <p className="text-[10px] text-muted-foreground">
+                Введіть ваш v4 Read Access Token з особистого кабінету TMDB
+                (developer.themoviedb.org).
+              </p>
+              <input
+                type="password"
+                placeholder="Введіть Bearer Token..."
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                className="w-full rounded-xl border border-input bg-background h-10 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+              />
+              <button
+                type="button"
+                onClick={handleSaveSettings}
+                className="inline-flex shrink-0 items-center justify-center rounded-lg text-sm font-medium transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-8 gap-1.5 px-2.5 w-full bg-muted border border-border hover:bg-muted/80 text-foreground cursor-pointer"
+              >
+                Зберегти зміни
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* Таблиця рекордів */}
+        <section className="w-full">
+          <LeaderboardTable />
+        </section>
+      </main>
+
+      <footer className="text-center text-muted-foreground text-[10px] pb-4">
+        CineTrivia &copy; {new Date().getFullYear()}. Дані отримано за допомогою
+        TMDB API.
+      </footer>
     </div>
-  )
-}
+  );
+};
