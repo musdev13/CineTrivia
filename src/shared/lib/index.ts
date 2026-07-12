@@ -4,4 +4,6 @@ export {
   getLeaderboard,
   getStats,
   updateGlobalStats,
+  type LeaderboardEntry,
+  type PlayerStats
 } from "./leaderboard";
